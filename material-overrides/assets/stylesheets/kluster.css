@@ -1,0 +1,407 @@
+:root {
+  --md-border-radius: .1rem;
+  --md-border-width: .1rem;
+}
+
+:root,
+[data-md-color-scheme='default'] {
+  --light: #FFFFFF;
+  --off-white: #F6F6F6;
+  --platinum: #D6D8D9;
+  --alice-blue: #DBEFFF;
+  --vibrant-indigo: #5200FF;
+  --blue-violet: #8630F3;
+  --mint: #5FEDA9;
+  --vibrant-coral: #ED7062;
+  --dark: #000000;
+  --dark-transparent-70: #00000070;
+
+  /* Primary color: vibrant indigo */
+  --vibrant-indigo-30: #5200FF30;
+  --vibrant-indigo-70: #5200FF90;
+
+  --md-code-fg-color: var(--vibrant-indigo);
+  --md-code-bg-color: var(--off-white);
+
+  --md-primary-fg-color: var(--vibrant-indigo);
+  --md-primary-fg-color--light: var(--vibrant-indigo-70);
+
+  --md-accent-fg-color: var(--blue-violet);
+  --md-accent-fg-color-light: var(--dark-transparent-70);
+  --md-accent-bg-color: var(--blue-violet);
+
+  --md-footer-fg-color: var(--dark);
+  --md-footer-fg-color--light: var(--dark);
+  --md-footer-fg-color--lighter: var(--dark);
+  --md-footer-bg-color: var(--light);
+  --md-footer-bg-color--dark: var(--light);
+
+  /* Admonition SVGs (base64 encoded) - use Material icons */
+  --md-admonition-icon--note: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48IS0tISBGb250IEF3ZXNvbWUgUHJvIDYuNC4wIGJ5IEBmb250YXdlc29tZSAtIGh0dHBzOi8vZm9udGF3ZXNvbWUuY29tIExpY2Vuc2UgLSBodHRwczovL2ZvbnRhd2Vzb21lLmNvbS9saWNlbnNlIChDb21tZXJjaWFsIExpY2Vuc2UpIENvcHlyaWdodCAyMDIzIEZvbnRpY29ucywgSW5jLiAtLT48cGF0aCBkPSJNNDEwLjMgMjMxbDExLjMtMTEuMy0zMy45LTMzLjktNjIuMS02Mi4xTDI5MS43IDg5LjhsLTExLjMgMTEuMy0yMi42IDIyLjZMNTguNiAzMjIuOWMtMTAuNCAxMC40LTE4IDIzLjMtMjIuMiAzNy40TDEgNDgwLjdjLTIuNSA4LjQtLjIgMTcuNSA2LjEgMjMuN3MxNS4zIDguNSAyMy43IDYuMWwxMjAuMy0zNS40YzE0LjEtNC4yIDI3LTExLjggMzcuNC0yMi4yTDM4Ny43IDI1My43IDQxMC4zIDIzMXpNMTYwIDM5OS40bC05LjEgMjIuN2MtNCAzLjEtOC41IDUuNC0xMy4zIDYuOUw1OS40IDQ1MmwyMy03OC4xYzEuNC00LjkgMy44LTkuNCA2LjktMTMuM2wyMi43LTkuMXYzMmMwIDguOCA3LjIgMTYgMTYgMTZoMzJ6TTM2Mi43IDE4LjdMMzQ4LjMgMzMuMiAzMjUuNyA1NS44IDMxNC4zIDY3LjFsMzMuOSAzMy45IDYyLjEgNjIuMSAzMy45IDMzLjkgMTEuMy0xMS4zIDIyLjYtMjIuNiAxNC41LTE0LjVjMjUtMjUgMjUtNjUuNSAwLTkwLjVMNDUzLjMgMTguN2MtMjUtMjUtNjUuNS0yNS05MC41IDB6bS00Ny40IDE2OGwtMTQ0IDE0NGMtNi4yIDYuMi0xNi40IDYuMi0yMi42IDBzLTYuMi0xNi40IDAtMjIuNmwxNDQtMTQ0YzYuMi02LjIgMTYuNC02LjIgMjIuNiAwczYuMiAxNi40IDAgMjIuNnoiLz48L3N2Zz4=');
+
+  /* * Code highlighting color shades * */
+  /* Imports, const, let, var, async, await, function, etc. */
+  --md-code-hl-keyword-color: var(--vibrant-coral);
+  /* Comments */
+  --md-code-hl-comment-color: var(--dark-transparent-70);
+}
+
+/* General styling */
+.md-nav__link:focus, .md-nav__link:hover,
+.md-typeset a:focus, .md-typeset a:hover {
+  color: var(--md-accent-bg-color);
+}
+
+.md-typeset h1 {
+  color: var(--md-default-fg-color);
+}
+
+.md-typeset pre>code {
+  border-radius: var(--md-border-radius);
+}
+
+.md-header {
+  background-color: var(--light);
+  padding: 1em;
+}
+
+/* Hides section permalink hash for H1 sections */
+.md-typeset h1 .headerlink {
+  display: none;
+}
+
+/* All other icons */
+.md-icon svg {
+  fill: var(--md-default-fg-color);
+}
+
+/* Section lines */
+li > nav.md-nav[data-md-level='3'],
+li > nav.md-nav[data-md-level='4'] {
+  border-left: var(--md-border-width) solid var(--md-accent-fg-color);
+}
+
+/* Custom admonition styling */
+.md-typeset .admonition {
+  border-width: var(--md-border-width);
+}
+
+.md-typeset .admonition, .md-typeset details {
+  width: fit-content;
+}
+
+.md-typeset .admonition.note {
+  border-color: var(--md-primary-fg-color);
+}
+
+/* Admonition icon background color */
+/* Should be the same as the border color above */
+.md-typeset .note > .admonition-title:before,
+.md-typeset .note > summary:before {
+  background-color: var(--md-primary-fg-color);
+}
+
+/* Admonition top background color */
+.md-typeset .note > .admonition-title,
+.md-typeset .note > summary {
+  background-color: var(--vibrant-indigo-30);
+}
+
+/* Styling for custom Admonition notes used for code */
+.md-typeset .admonition.code,
+.md-typeset details.code {
+  border-color: XXX;
+}
+
+/* Admonition icon background color */
+/* Should be the same as the border color above */
+.md-typeset .code > .admonition-title,
+.md-typeset .code > summary {
+  background-color: XXX;
+}
+
+/* Admonition top background color */
+.md-typeset .code > .admonition-title::before,
+.md-typeset .code > summary::before {
+  background-color: XXX;
+  -webkit-mask-image: XXX;
+  mask-image: XXX;
+}
+
+/* Styling for the Copy to Clipboard */
+/* Clipboard icon */
+.md-clipboard {
+  color: var(--md-default-fg-color);
+}
+
+.md-clipboard:focus,
+.md-clipboard:hover {
+  color: var(--md-accent-bg-color);
+}
+
+.md-dialog {
+  text-align: center;
+}
+
+/* Styling for Tables */
+.md-typeset table:not([class]) {
+  border-radius: var(--md-border-radius);
+  display: inline-table;
+}
+
+.md-typeset .md-typeset__table table th {
+  background-color: var(--vibrant-indigo-30);
+}
+
+.md-typeset table:not([class]) td,
+.md-typeset table:not([class]) th {
+  vertical-align: middle;
+}
+
+/* Tables centered */
+.md-typeset__scrollwrap {
+  text-align: center;
+}
+
+/* Tables in tabs */
+.tabbed-content .md-typeset__scrollwrap {
+  margin: 0;
+}
+
+.tabbed-content .md-typeset__table {
+  display: inline-table;
+  margin-bottom: 0;
+  padding: 0.5em;
+  width: 100%;
+}
+
+/* Tabbed Styling */
+.md-typeset .tabbed-labels {
+  box-shadow: none;
+  padding: 0.2em;
+}
+
+.md-typeset .tabbed-set {
+  background: var(--off-white);
+  border-radius: var(--md-border-radius);
+}
+
+.md-typeset .tabbed-content {
+  background: var(--md-default-bg-color);
+  border: var(--md-border-width) solid var(--off-white);
+  border-bottom-left-radius: var(--md-border-radius);
+  border-bottom-right-radius: var(--md-border-radius);
+}
+
+.md-typeset
+  .tabbed-set
+  > input:first-child:checked
+  ~ .tabbed-labels
+  > :first-child,
+.md-typeset
+  .tabbed-set
+  > input:nth-child(10):checked
+  ~ .tabbed-labels
+  > :nth-child(10),
+.md-typeset
+  .tabbed-set
+  > input:nth-child(11):checked
+  ~ .tabbed-labels
+  > :nth-child(11),
+.md-typeset
+  .tabbed-set
+  > input:nth-child(12):checked
+  ~ .tabbed-labels
+  > :nth-child(12),
+.md-typeset
+  .tabbed-set
+  > input:nth-child(13):checked
+  ~ .tabbed-labels
+  > :nth-child(13),
+.md-typeset
+  .tabbed-set
+  > input:nth-child(14):checked
+  ~ .tabbed-labels
+  > :nth-child(14),
+.md-typeset
+  .tabbed-set
+  > input:nth-child(15):checked
+  ~ .tabbed-labels
+  > :nth-child(15),
+.md-typeset
+  .tabbed-set
+  > input:nth-child(16):checked
+  ~ .tabbed-labels
+  > :nth-child(16),
+.md-typeset
+  .tabbed-set
+  > input:nth-child(17):checked
+  ~ .tabbed-labels
+  > :nth-child(17),
+.md-typeset
+  .tabbed-set
+  > input:nth-child(18):checked
+  ~ .tabbed-labels
+  > :nth-child(18),
+.md-typeset
+  .tabbed-set
+  > input:nth-child(19):checked
+  ~ .tabbed-labels
+  > :nth-child(19),
+.md-typeset
+  .tabbed-set
+  > input:nth-child(2):checked
+  ~ .tabbed-labels
+  > :nth-child(2),
+.md-typeset
+  .tabbed-set
+  > input:nth-child(20):checked
+  ~ .tabbed-labels
+  > :nth-child(20),
+.md-typeset
+  .tabbed-set
+  > input:nth-child(3):checked
+  ~ .tabbed-labels
+  > :nth-child(3),
+.md-typeset
+  .tabbed-set
+  > input:nth-child(4):checked
+  ~ .tabbed-labels
+  > :nth-child(4),
+.md-typeset
+  .tabbed-set
+  > input:nth-child(5):checked
+  ~ .tabbed-labels
+  > :nth-child(5),
+.md-typeset
+  .tabbed-set
+  > input:nth-child(6):checked
+  ~ .tabbed-labels
+  > :nth-child(6),
+.md-typeset
+  .tabbed-set
+  > input:nth-child(7):checked
+  ~ .tabbed-labels
+  > :nth-child(7),
+.md-typeset
+  .tabbed-set
+  > input:nth-child(8):checked
+  ~ .tabbed-labels
+  > :nth-child(8),
+.md-typeset
+  .tabbed-set
+  > input:nth-child(9):checked
+  ~ .tabbed-labels
+  > :nth-child(9) {
+  opacity: 1;
+}
+
+.md-typeset .tabbed-labels > label {
+  opacity: .7;
+}
+
+.md-typeset .tabbed-labels>label:hover {
+  opacity: 1;
+}
+
+.js .md-typeset .tabbed-labels:before {
+  background: var(--vibrant-indigo);
+}
+
+/* Grid styling */
+.grid > div:last-child {
+  max-height: 1000px;
+  overflow: auto;
+}
+
+.md-typeset .grid {
+  grid-gap: 3rem;
+}
+
+.md-typeset .grid > div:first-child > p:first-child {
+  margin-top: 0;
+}
+
+.grid .highlight span.filename {
+  margin-top: 0;
+}
+
+/* Type styling */
+.md-typeset kbd {
+  border-radius: 1em;
+  vertical-align: baseline;
+  box-shadow: none;
+}
+/* For links to definitions on reference pages */
+.md-typeset .twemoji {
+  vertical-align: middle;
+}
+
+@media screen and (min-width: 60em) {
+  .md-search__form {
+    background-color: var(--off-white);
+  }
+
+  .md-search__form:hover {
+    background-color: var(--md-default-fg-color--lightest);
+  }
+
+  .md-search__input {
+    color: var(--md-default-fg-color);
+  }
+
+  [dir=ltr] .md-search__input::placeholder {
+    color: var(--md-default-fg-color);
+  }
+}
+
+.md-footer-meta {
+  border-top: 1px solid var(--md-default-fg-color--lightest);
+}
+
+/* Active and hover styling for nav links */
+@media screen and (min-width: 76.25em) {
+  .md-nav--lifted>.md-nav__list>.md-nav__item--active>.md-nav__link {
+    box-shadow: none;
+  }
+  
+  .md-nav__list .md-ellipsis {
+    padding: .2em 0 .2em .2em;
+    width: 100%;
+  }
+  
+  .md-nav__list .md-nav__link--active .md-ellipsis {
+    background-color: var(--vibrant-indigo-30);
+    border-radius: var(--md-border-radius);
+  }
+  
+  .md-nav__list .md-nav__link:hover .md-ellipsis,
+  .md-nav__list .md-nav__link--active:hover .md-ellipsis {
+    color: var(--md-typeset-a-color);
+    background-color: var(--vibrant-indigo-30);
+    border-radius: var(--md-border-radius);
+    opacity: 1;
+  }
+}
+
+@media screen and (max-width: 76.234375em) {
+  .md-nav__title .md-nav__button.md-logo img {
+    height: auto;
+  }
+
+  .md-nav--primary .md-nav__title[for=__drawer] {
+    background-color: var(--md-default-bg-color);
+    height: 3.4rem;
+  }
+
+  .md-nav--primary .md-nav__title {
+    background-color: var(--md-default-bg-color);
+    color: var(--md-default-fg-color);
+  }
+}
+
+@media screen and (max-width: 76.2344em) {
+  .md-header__button.md-logo {
+    display: block;
+  }
+}

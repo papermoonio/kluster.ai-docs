@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block styles %}
+	{{ super() }}
+  <link rel="stylesheet" href="{{ '/assets/stylesheets/kluster.css' | url }}">
+{% endblock %}
+
+{% block site_meta %}
+  {{ super() }}
+  {% if page and page.meta and page.meta.keywords %}
+    <meta name="keywords" content="{{ page.meta.keywords }}">
+  {% endif %}
+{% endblock %}
+
+{%- block htmltitle -%} 
+  {%- if page.is_homepage -%} 
+    <title>Documentation for XXX</title> 
+  {%- elif page and page.meta and page.meta.title -%} 
+    <title>{{ page.meta.title }} | {{ config.site_name }}</title> 
+  {%- elif page and page.title and not page.is_homepage -%} 
+    <title>{{ page.title }} | {{ config.site_name }}</title> 
+  {%- else -%}
+    <title>{{ config.site_name }}</title> 
+  {%- endif -%} 
+{%- endblock -%} 
+
+{%- block container -%} 
+  <div class="md-content" data-md-component="content">
+    {% set class = "index-page" if not page.content and not page.is_homepage %}
+    <article class="md-content__inner md-typeset {{ class }}">
+      {% block content %}
+        {% include "partials/content.html" %}
+      {% endblock %}
+    </article>
+  </div>
+{%- endblock -%} 
