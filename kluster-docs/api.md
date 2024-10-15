@@ -1,8 +1,269 @@
 ---
-title: API documentation
-description:
+title: API Reference
+description: A reference for the types and interfaces in the Moonbeam XCM SDK that can be used to send XCM transfers between chains within the Polkadot/Kusama ecosystems.
 hide:
 - footer
 ---
 
 # API Reference
+
+Welcome to the Kluster.ai getting started guide! This document will show you how to get started submitting Batch jobs quickly. If you are using the OpenAI API endpoints, then the Kluster.ai endpoints will be familiar. In the next sections, we’ll show you Curl and Python examples of how to locate your API key, define a collection of Batch jobs as a JSON lines file, upload the file to the Kluster.ai endpoint, invoke the chat completion end point, monitor progress of the Batch job, retrieve the result of the Batch job, list all Batch objects, and cancel a Batch request.
+
+## Get Your API Key
+
+Navigate to the [platform.kluster.ai](http://platform.kluster.ai){target=\_blank} web app and select **API Keys** from the left hand menu. Create a new API key by specifying the API key name. You’ll need this to set the auth header in all of the API requests.
+
+## List Supported Models
+
+First, let’s use the models endpoint to list out the models that we support. Currently, only Meta-Llama-3.1-8B-Instruct, Meta-Llama-3.1-70B-Instruct, and Meta-Llama-3.1-405B-Instruct are supported. The response is a list of model objects. 
+
+<div class="grid" markdown>
+<div markdown>
+
+**Request**
+
+`get https://api.kluster.ai/v1/models` - Lists the currently available models.
+
+**Returns**
+
+- `id` ++"string"++ - The model identifier, which can be referenced in the API endpoints.
+- `created` ++"integer"++ - The Unix timestamp (in seconds) when the model was created.
+- `object` ++"string"++- The object type, which is always `model`.
+- `owned_by` ++"string"++- The organization that owns the model.
+
+</div>
+<div markdown>
+
+```bash title="Query LLMs"
+curl https://api.kluster.ai/v1/models \
+  -H "Authorization: Bearer $API_KEY" 
+```
+
+```json title="Response"
+[
+   {
+      "id":"meta-llama/Meta-Llama-3.1-70B-Instruct",
+      "object":"model",
+      "created":"1970-01-01T00:00:00Z",
+      "owned_by":"owner1"
+   },
+   {
+      "id":"meta-llama/Meta-Llama-3.1-8B-Instruct",
+      "object":"model",
+      "created":"1970-01-01T00:00:00Z",
+      "owned_by":"owner2"
+   },
+   {
+      "id":"meta-llama/Meta-Llama-3.1-405B-Instruct",
+      "object":"model",
+      "created":"1970-01-01T00:00:00Z",
+      "owned_by":"owner3"
+   }
+]
+```
+
+</div>
+</div>
+
+---
+
+## Create a Batch File with a Collection of Jobs
+
+Create a [JSON Lines](https://jsonlines.org/) file containing a collection of `batch request input` objects. The body of each is a `chat completion` object with the endpoint `/v1/chat/completions`. Each request must include a unique `custom_id` which is used to reference results after the Batch job has completed.
+
+<div class="grid" markdown>
+<div markdown>
+
+**Batch request input object**
+
+`custom_id` ++"string"++ - A developer-provided per-request id that will be used to match outputs to inputs. Must be unique for each request in a Batch.
+
+---
+
+`method` ++"string"++ - The HTTP method to be used for the request. Currently only `POST` is supported.
+
+---
+
+`url` ++"string"++ - The `/v1/chat/completions` API relative URL
+
+---
+
+**Request body object (chat completion object)**
+
+`messages` ++"array"++ <span class="required" markdown>++"required"++</span> - Add description here.
+
+??? child "Show properties"
+
+    `additional_messages` ++"object"++ - Add description here.
+
+    ??? child "Show properties"
+
+        `role` ++"string"++ <span class="required" markdown>++"required"++</span> - The role of the messages author, in this case `assistant`.
+        
+        ---
+
+        `content` ++"string | array"++ - The contents of the assistant message.  
+        
+        ---
+
+        `refusal` ++"string | null"++  - The refusal message by the assistant.
+        
+        ---
+
+        `name` ++"string"++  - An optional name for the participant. Provides the model information to differentiate between participants of the same role.
+
+    ---
+
+    `tool_calls` ++"array"++ - Add description here.
+
+    ??? child "Show properties"
+
+        `id` ++"string"++ <span class="required" markdown>++"required"++</span> - The ID of the tool call.
+        
+        ---
+
+        `type` ++"string"++  <span class="required" markdown>++"required"++</span> - The type of the tool. Currently, only function is supported.
+        
+        ---
+
+        `function` object <span class="required" markdown>++"required"++</span> - The function that the model called.
+        
+        ---
+
+        `name` ++"string"++ <span class="required" markdown>++"required"++</span> - The name of the function to call.
+        
+        ---
+
+        `arguments` ++"string"++ <span class="required" markdown>++"required"++</span> - The arguments to call the function with, as generated by the model in JSON format. Note that the model does not always generate valid JSON, and may hallucinate parameters not defined by your function schema. Validate the arguments in your code before calling your function.
+
+    ---
+
+    `tool message` ++"object"++ -  Add description here.
+
+    ??? child "Show properties"
+
+        `role` ++"string"++ <span class="required" markdown>++"required"++</span> - The role of the messages author.
+  
+        ---
+
+        `content` ++"string | array"++ <span class="required" markdown>++"required"++</span> - The contents of the tool message.
+
+        ---
+
+        `tool_call_id` ++"string"++ <span class="required" markdown>++"required"++</span> - Tool call that this message is responding to.
+
+---
+
+`model` ++"string"++<span class="required" markdown>++"required"++</span> - ID of the model to use. See the model endpoint compatibility table for details on which models work with the Chat API.
+
+---
+
+`store` ++"boolean | null"++ - Whether or not to store the output of this chat completion request for use in our model distillation or evals products. Defaults to `false`.
+
+---
+
+**Returns**
+
+A chat completion object.
+
+</div>
+<div markdown>
+
+=== "Curl"
+
+    ```json title="Example: Collection of Batch Jobs"
+    {"custom_id": "request-1", "method": "POST", "url": "/v1/chat/completions", "body": {"model": "meta-llama/Meta-Llama-3.1-8B-Instruct", "messages": [{"role": "system", "content": "You are a helpful assistant."}, {"role": "user", "content": "What is the capital of Argentina?"}],"max_tokens":1000}}
+    {"custom_id": "request-1", "method": "POST", "url": "/v1/chat/completions", "body": {"model": "meta-llama/Meta-Llama-3.1-70B-Instruct", "messages": [{"role": "system", "content": "You are an experienced maths tutor."}, {"role": "user", "content": "Explain the Pythagorean theorem to a 10 year old child"}],"max_tokens":1000}}
+    {"custom_id": "request-1", "method": "POST", "url": "/v1/chat/completions", "body": {"model": "meta-llama/Meta-Llama-3.1-405B-Instruct", "messages": [{"role": "system", "content": "You are a helpful assistant."}, {"role": "user", "content": "What is the distance between the Earth and the Moon"}],"max_tokens":1000}}
+    ```
+
+=== "Python"
+
+    ```python title="Example: Collection of Batch Jobs"
+    tasks = [{
+            "custom_id": "request-1",
+            "method": "POST",
+            "url": "/v1/chat/completions",
+            "body": {
+                "model": "meta-llama/Meta-Llama-3.1-8B-Instruct",
+                "messages": [
+                    {"role": "system", "content": "You are a helpful assistant."},
+                    {"role": "user", "content": "What is the capital of Argentina?"},
+                ],
+                "max_tokens": 1000,
+            },
+        },
+        {
+            "custom_id": "request-2",
+            "method": "POST",
+            "url": "/v1/chat/completions",
+            "body": {
+                "model": "meta-llama/Meta-Llama-3.1-70B-Instruct",
+                "messages": [
+                    {"role": "system", "content": "You are a maths tutor."},
+                    {"role": "user", "content": "You are an experienced maths tutor."}, {"role": "user", "content": "Explain the Pythagorean theorem to a 10 year old child."},
+                ],
+                "max_tokens": 1000,
+            },
+        },
+        {
+            "custom_id": "request-3",
+            "method": "POST",
+            "url": "/v1/chat/completions",
+            "body": {
+                "model": "meta-llama/Meta-Llama-3.1-405B-Instruct",
+                "messages": [
+                    {"role": "system", "content": "You are a maths tutor."},
+                    {"role": "user", "content": "You are an experienced maths tutor."}, {"role": "user", "content": "What is the distance between the Earth and the Moon."},
+                ],
+                "max_tokens": 1000,
+            },
+        }
+        # Additional tasks can be added here
+    ]
+
+    # Save tasks to a JSONL file (newline-delimited JSON)
+    file_name = "batch_tasks.jsonl"
+    with open(file_name, "w") as file:
+        for task in tasks:
+            file.write(json.dumps(task) + "\n")
+    ```
+
+</div>
+</div>
+
+---
+
+## Update Profile
+
+<div class="grid" markdown>
+<div markdown>
+
+`updateProfile(userId, newData)` - Updates the user's profile with new information.
+
+**Parameters**
+
+- `userId` ++"string"++ - The unique identifier of the user whose profile is to be updated.
+- `newData` ++"object"++ - An object containing the new profile information to be updated.
+
+**Returns**
+
+- `boolean` - `true` if the profile was successfully updated, `false` otherwise.
+
+</div>
+<div markdown>
+
+```javascript title="Example"
+const updated = updateProfile(
+  '123456', 
+  { name: 'Jane Doe', email: 'jane@example.com' }
+);
+console.log(updated);
+```
+
+```js title="Response"
+true
+```
+
+</div>
+</div>
