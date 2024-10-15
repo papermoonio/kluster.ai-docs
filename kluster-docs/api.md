@@ -76,21 +76,29 @@ Create a [JSON Lines](https://jsonlines.org/) file containing a collection of `b
 
 **Batch request input object**
 
-`custom_id` ++"string"++ - A developer-provided per-request id that will be used to match outputs to inputs. Must be unique for each request in a Batch.
+`custom_id` ++"string"++
+
+A developer-provided per-request id that will be used to match outputs to inputs. Must be unique for each request in a Batch.
 
 ---
 
-`method` ++"string"++ - The HTTP method to be used for the request. Currently only `POST` is supported.
+`method` ++"string"++
+
+The HTTP method to be used for the request. Currently only `POST` is supported.
 
 ---
 
-`url` ++"string"++ - The `/v1/chat/completions` API relative URL
+`url` ++"string"++
+
+The `/v1/chat/completions` API relative URL.
 
 ---
 
-`body` ++"TODO: update type"++ - the request body object (chat completion object)
+`body` ++"TODO: update type"++
 
-??? child "Show attributes"
+The request body object (chat completion object).
+
+??? child "Show properties"
 
     --8<-- 'text/api/chat-completion-object.md'
 
