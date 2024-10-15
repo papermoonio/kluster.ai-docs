@@ -328,13 +328,47 @@ li > nav.md-nav[data-md-level='4'] {
 
 /* Type styling */
 .md-typeset kbd {
+  background-color: unset;
+  font-size: .7em;
+  padding-left: 0;
   border-radius: 1em;
   vertical-align: baseline;
   box-shadow: none;
 }
-/* For links to definitions on reference pages */
-.md-typeset .twemoji {
-  vertical-align: middle;
+
+/* Add background for required parameters */
+.md-typeset .required kbd {
+  background-color: rgb(255, 0, 0, .33);
+  text-transform: capitalize;
+  padding-left: .6666666667em;
+}
+
+/* Child adomonition styling */
+details.child summary::before {
+  display: none;
+}
+
+details.child {
+  width: fit-content;
+}
+
+[dir=ltr] .md-typeset details.child summary {
+  width: fit-content;
+  padding-left: 1em;
+}
+
+[dir=ltr] .md-typeset details.child[open] {
+  width: 100%;
+}
+
+.md-typeset details.child summary {
+  background-color: unset;
+}
+
+.md-typeset details.child {
+  width: fit-content;
+  border: 1px solid var(--platinum);
+  box-shadow: none;
 }
 
 @media screen and (min-width: 60em) {
