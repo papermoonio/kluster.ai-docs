@@ -1,3 +1,2 @@
 nav:
- - 'Home': index.md
- - api.md
+ - 'Getting Started Guide': getting-started.md
