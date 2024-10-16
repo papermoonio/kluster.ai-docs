@@ -1,6 +1,7 @@
-site_name: Kluster Docs
+site_name: Documentation for kluster.ai
 site_url: https://papermoonio.github.io/kluster.ai-docs/
 home_url: https://kluster.ai/
+home_name: kluster.ai
 docs_dir: kluster-docs
 copyright: © 2024 kluster.ai. All rights reserved.
 theme:
