@@ -1,38 +1,36 @@
 ---
-title: Getting started guide
-description:
+title: Getting Started Guide
+description: The kluster.ai getting started guide provides examples and instructions for submitting and managing Batch jobs using kluster.ai's OpenAI-compatible API.
 hide:
 - footer
 ---
 
 # Getting started guide
 
-Welcome to the Kluster.ai getting started guide! This document will show you how to get started quickly submitting Batch jobs. 
+Welcome to the Kluster.ai getting started guide! This guide provides a quick introduction to submitting Batch jobs.
 
-Kluster.ai is API compatible with the OpenAI library. Functionally, our implementation is limited to `model`, `messages`, and `stream`. If you have specific requirements on additional request properties, please let us know during the Early Access Plan. To install the OpenAI Python library, follow [these](https://platform.openai.com/docs/libraries/python-library) instructions. 
+Kluster.ai is API-compatible with the OpenAI library, supporting `model`, `messages`, and `stream` functions. If additional request properties are needed, they can be requested during the Early Access Plan. To install the OpenAI Python library, follow the [instructions](https://platform.openai.com/docs/libraries/python-library){target=\_blank} on OpenAI's documentation.
 
-In this document, we've shown the OpenAI object definitions to help you get started. For more details, refer to the OpenAI [API reference](https://platform.openai.com/docs/api-reference/introduction) documentation. In the following sections, we’ll show you Curl and Python examples of how to locate your API key, define a collection of Batch jobs as a JSON lines file, upload the file to the Kluster.ai endpoint, invoke the chat completion end point, monitor progress of the Batch job, retrieve the result of the Batch job, list all Batch objects, and cancel a Batch request.
+OpenAI object definitions are included to help you get started. For more details, refer to the OpenAI [API reference](https://platform.openai.com/docs/api-reference/introduction){target=\_blank}. The following sections offer Curl and Python examples on locating the API key, defining Batch jobs as a JSON Lines file, uploading the file to the Kluster.ai endpoint, invoking the chat completion endpoint, monitoring job progress, retrieving results, listing Batch objects, and canceling requests.
 
 ## Get Your API Key
 
-Navigate to the [platform.kluster.ai](http://platform.kluster.ai){target=\_blank} web app and select **API Keys** from the left hand menu. Create a new API key by specifying the API key name. You’ll need this to set the auth header in all of the API requests.
+Navigate to the [platform.kluster.ai](http://platform.kluster.ai){target=\_blank} web app and select **API Keys** from the left-hand menu. Create a new API key by specifying the API key name. You'll need this to set the auth header in all of the API requests.
 
 ## List Supported Models
 
-First, let’s use the models endpoint to list out the models that we support. Currently, only Meta-Llama-3.1-8B-Instruct, Meta-Llama-3.1-70B-Instruct, and Meta-Llama-3.1-405B-Instruct are supported. The response is a list of model objects. 
+First, you can use the models endpoint to list out the supported models that. Currently, only Meta-Llama-3.1-8B-Instruct, Meta-Llama-3.1-70B-Instruct, and Meta-Llama-3.1-405B-Instruct are supported. The response is a list of model objects.
 
 <div class="grid" markdown>
 <div markdown>
 
 **Request**
 
----
+`get https://api.kluster.ai/v1/models`
 
-`get https://api.kluster.ai/v1/models` - Lists the currently available models.
+Lists the currently available models.
 
 **Returns**
-
----
 
 `id` ++"string"++
 
@@ -61,7 +59,7 @@ The organization that owns the model.
 
 ```bash title="Example request"
 curl https://api.kluster.ai/v1/models \
-  -H "Authorization: Bearer $API_KEY" 
+-H "Authorization: Bearer $API_KEY" 
 ```
 
 ```json title="Response"
@@ -94,7 +92,7 @@ curl https://api.kluster.ai/v1/models \
 
 ## Create a Batch File with a Collection of Jobs
 
-Create a [JSON Lines](https://jsonlines.org/) file containing a collection of `batch request input` objects. The body of each is a `chat completion` object with the endpoint `/v1/chat/completions`. Each request must include a unique `custom_id` which is used to reference results after the Batch job has completed.
+Create a [JSON Lines](https://jsonlines.org/) file containing a collection of `batch request input` objects. The body of each request is a `chat completion` object with the endpoint `/v1/chat/completions`. Each request must include a unique `custom_id` used to reference results after the Batch job has been completed.
 
 <div class="grid" markdown>
 <div markdown>
@@ -103,7 +101,7 @@ Create a [JSON Lines](https://jsonlines.org/) file containing a collection of `b
 
 `custom_id` ++"string"++
 
-A developer-provided per-request id that will be used to match outputs to inputs. Must be unique for each request in a Batch.
+A developer-provided per-request ID that will be used to match outputs to inputs. Must be unique for each request in a Batch.
 
 ---
 
@@ -121,208 +119,230 @@ The `/v1/chat/completions` API relative URL.
 
 **Request body**
 
-`model` ++"string"++ <span class="required" markdown>++"required"++</span>
-
-ID of the model to use. See the model endpoint compatibility table for details on which models work with the Chat API.
-
-`Messages` ++"Arrray"++ <span class="required" markdown>++"required"++</span>
+`body` ++"object"++ <span class="required" markdown>++"required"++</span>
 
 The request body object (chat completion object).
 
 ??? child "Show properties"
 
-    `role` ++"string"++ <span class="required" markdown>++"required"++</span>
+    `model` ++"string"++ <span class="required" markdown>++"required"++</span>
 
-    The role of the messages author, in this case `assistant`.
+    ID of the model to use. See the model endpoint compatibility table for details on which models work with the Chat API.
 
-    `content` ++"string or array"++
+    ---
 
-    The contents of the assistant message.  
+    `messages` ++"array"++ <span class="required" markdown>++"required"++</span>
 
-    `refusal` ++"string or null"++
+    A list of messages comprising the conversation so far.
 
-    The refusal message by the assistant.
+    ??? child "Show properties"
+
+        `role` ++"string"++ <span class="required" markdown>++"required"++</span>
+
+        The role of the messages author, in this case `assistant`.
+
+        ---
+
+        `content` ++"string or array"++
+
+        The contents of the assistant message.  
+
+        ---
+
+        `refusal` ++"string or null"++
+
+        The refusal message by the assistant.
         
-    `name` ++"string"++
+        ---
 
-    An optional name for the participant. Provides the model information to differentiate between participants of the same role.
+        `name` ++"string"++
 
----
+        An optional name for the participant. Provides the model information to differentiate between participants of the same role.
 
-`store` ++"boolean or null"++ 
+    ---
 
-Whether or not to store the output of this chat completion request for use in our model distillation or evals products. Defaults to false.
+    `store` ++"boolean or null"++
 
----
+    Whether or not to store the output of this chat completion request for use in our model distillation or evals products. Defaults to `false`.
 
-`metadata` ++"object or null"++
+    ---
 
-Developer-defined tags and values used for filtering completions in the dashboard.
+    `metadata` ++"object or null"++
 
----
+    Developer-defined tags and values used for filtering completions in the dashboard.
 
-`frequency_penalty` ++"number or null"++
+    ---
 
-Number between -2.0 and 2.0. Positive values penalize new tokens based on their existing frequency in the text so far, decreasing the model's likelihood to repeat the same line verbatim. Defaults to 0.
+    `frequency_penalty` ++"number or null"++
 
----
+    Number between -2.0 and 2.0. Positive values penalize new tokens based on their existing frequency in the text so far, decreasing the model's likelihood of repeating the same line verbatim. Defaults to `0`.
 
-`logit_bias` ++"map"++
+    ---
 
-Modify the likelihood of specified tokens appearing in the completion. Defaults to null
+    `logit_bias` ++"map"++
 
-Accepts a JSON object that maps tokens (specified by their token ID in the tokenizer) to an associated bias value from -100 to 100. Mathematically, the bias is added to the logits generated by the model prior to sampling. The exact effect will vary per model, but values between -1 and 1 should decrease or increase likelihood of selection; values like -100 or 100 should result in a ban or exclusive selection of the relevant token.
+    Modify the likelihood of specified tokens appearing in the completion. Defaults to `null`.
 
----
+    Accepts a JSON object that maps tokens (specified by their token ID in the tokenizer) to an associated bias value from -100 to 100. Mathematically, the bias is added to the logits generated by the model prior to sampling. The exact effect will vary per model, but values between -1 and 1 should decrease or increase the likelihood of selection; values like -100 or 100 should result in a ban or exclusive selection of the relevant token.
 
-`logprobs` ++"boolean or null"++
+    ---
 
-Whether to return log probabilities of the output tokens or not. If true, returns the log probabilities of each output token returned in the `content` of `message`. Defaults to false.
+    `logprobs` ++"boolean or null"++
 
----
+    Whether to return log probabilities of the output tokens or not. If true, returns the log probabilities of each output token returned in the `content` of `message`. Defaults to `false`.
 
-`top_logprobs` ++"integer or null"++
+    ---
 
-An integer between 0 and 20 specifying the number of most likely tokens to return at each token position, each with an associated log probability. `logprobs` must be set to `true` if this parameter is used.
+    `top_logprobs` ++"integer or null"++
 
----
+    An integer between 0 and 20 specifying the number of most likely tokens to return at each token position, each with an associated log probability. `logprobs` must be set to `true` if this parameter is used.
 
-`max_tokens` Deprecated ++"integer or null"++ 
+    ---
 
-The maximum number of tokens that can be generated in the chat completion. This value can be used to control costs for text generated via API.
+    `max_tokens` ++"integer or null"++ *deprecated*
 
-This value is now deprecated in favor of max_completion_tokens.
+    This value is now deprecated in favor of `max_completion_tokens`.
 
----
+    The maximum number of tokens that can be generated in the chat completion. This value can be used to control costs for text generated via API.
 
-`max_completion_tokens` ++"integer or null"++
+    ---
 
-An upper bound for the number of tokens that can be generated for a completion, including visible output tokens and reasoning tokens.
+    `max_completion_tokens` ++"integer or null"++
 
----
+    An upper bound for the number of tokens that can be generated for a completion, including visible output tokens and reasoning tokens.
 
-`n` ++"integer or null"++ 
+    ---
 
-The number of chat completion choices to generate for each input message. Note that you will be charged based on the number of generated tokens across all of the choices. Keep `n` as `1` to minimize costs. Defaults to 1.
+    `n` ++"integer or null"++
 
----
+    The number of chat completion choices to generate for each input message. Note that you will be charged based on the number of generated tokens across all of the choices. Keep `n` as `1` to minimize costs. Defaults to `1`.
 
-`presence_penalty` ++"number or null"++ 
+    ---
 
-Number between -2.0 and 2.0. Positive values penalize new tokens based on whether they appear in the text so far, increasing the model's likelihood to talk about new topics. Defaults to 0.
+    `presence_penalty` ++"number or null"++
 
----
+    Number between -2.0 and 2.0. Positive values penalize new tokens based on whether they appear in the text so far, increasing the model's likelihood to talk about new topics. Defaults to `0`.
 
-`response_format` ++"object"++ 
+    ---
 
-An object specifying the format that the model must output. Compatible with Meta-Llama-3.1-8B-Instruct, Meta-Llama-3.1-70B-Instruct, and Meta-Llama-3.1-405B-Instruct.
+    `response_format` ++"object"++
 
-Setting to `{ "type": "json_schema", "json_schema": {...} }` enables Structured Outputs which ensures the model will match your supplied JSON schema. 
+    An object specifying the format that the model must output. Compatible with Meta-Llama-3.1-8B-Instruct, Meta-Llama-3.1-70B-Instruct, and Meta-Llama-3.1-405B-Instruct.
 
-Setting to `{ "type": "json_object" }` enables JSON mode, which ensures the message the model generates is valid JSON.
+    Setting to `{ "type": "json_schema", "json_schema": {...} }` enables Structured Outputs which ensures the model will match your supplied JSON schema.
 
-**Important:** when using JSON mode, you **must** also instruct the model to produce JSON yourself via a system or user message. Without this, the model may generate an unending stream of whitespace until the generation reaches the token limit, resulting in a long-running and seemingly "stuck" request. Also note that the message content may be partially cut off if `finish_reason="length"`, which indicates the generation exceeded `max_tokens` or the conversation exceeded the max context length.
+    Setting to `{ "type": "json_object" }` enables JSON mode, which ensures the message the model generates is valid JSON.
 
----
+    **Important:** when using JSON mode, you **must** also instruct the model to produce JSON yourself via a system or user message. Without this, the model may generate an unending stream of whitespace until the generation reaches the token limit, resulting in a long-running and seemingly "stuck" request. Also note that the message content may be partially cut off if `finish_reason="length"`, which indicates the generation exceeded `max_tokens` or the conversation exceeded the max context length.
 
-`seed` ++"integer or null"++
+    ---
 
-This feature is in Beta. If specified, our system will make a best effort to sample deterministically, such that repeated requests with the same `seed` and parameters should return the same result. Determinism is not guaranteed, and you should refer to the `system_fingerprint` response parameter to monitor changes in the backend.
+    `seed` ++"integer or null"++
 
----
+    This feature is in Beta. If specified, our system will make a best effort to sample deterministically, such that repeated requests with the same `seed` and parameters should return the same result. Determinism is not guaranteed, and you should refer to the `system_fingerprint` response parameter to monitor changes in the backend.
 
-`service_tier` ++"string or null"++ 
+    ---
 
-Specifies the latency tier to use for processing the request. Defaults to null. This parameter is relevant for customers subscribed to the scale tier service:
+    `service_tier` ++"string or null"++
 
-- If set to 'auto', and the Project is Scale tier enabled, the system will utilize scale tier credits until they are exhausted.
-- If set to 'auto', and the Project is not Scale tier enabled, the request will be processed using the default service tier with a lower uptime SLA and no latency guarentee.
-- If set to 'default', the request will be processed using the default service tier with a lower uptime SLA and no latency guarentee.
-- When not set, the default behavior is 'auto'.
-- When this parameter is set, the response body will include the service_tier utilized.
+    Specifies the latency tier to use for processing the request. Defaults to `null`. This parameter is relevant for customers subscribed to the scale tier service:
 
----
+    - If set to `auto`, and the Project is Scale tier enabled, the system will utilize scale tier credits until they are exhausted
+    - If set to `auto`, and the Project is not Scale tier enabled, the request will be processed using the default service tier with a lower uptime SLA and no latency guarantee
+    - If set to `default`, the request will be processed using the default service tier with a lower uptime SLA and no latency guarantee
+    - When not set, the default behavior is `auto`
+    - When this parameter is set, the response body will include the `service_tier` utilized
 
-`stop` ++"string / array / null"++
+    ---
 
-Up to 4 sequences where the API will stop generating further tokens. Defaults to null.
+    `stop` ++"string or array or null"++
 
----
+    Up to four sequences where the API will stop generating further tokens. Defaults to `null`.
 
-`stream` ++"boolean or null"++ 
+    ---
 
-If set, partial message deltas will be sent, like in ChatGPTpl. Tokens will be sent as data-only server-sent events as they become available, with the stream terminated by a `data: [DONE]` message. Defaults to false.
+    `stream` ++"boolean or null"++
 
----
+    If set, partial message deltas will be sent, like in ChatGPTpl. Tokens will be sent as data-only server-sent events as they become available, with the stream terminated by a `data: [DONE]` message. Defaults to `false`.
 
-`stream_options` ++"object or null"++
+    ---
 
-Options for streaming response. Only set this when you set `stream: true` . Defaults to null
+    `stream_options` ++"object or null"++
 
----
+    Options for streaming response. Only set this when you set `stream: true`. Defaults to `null`
 
-`temperature` ++"number or null"++
+    ---
 
-The sampling temperature to use, between 0 and 2. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic. Defaults to 1.
+    `temperature` ++"number or null"++
 
-We generally recommend altering this or `top_p` but not both.
+    The sampling temperature to use, between 0 and 2. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic. Defaults to `1`.
 
----
+    It is generally recommended to alter this or `top_p` but not both.
 
-`top_p` ++"number or null"++
+    ---
 
-An alternative to sampling with temperature, called nucleus sampling, where the model considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens comprising the top 10% probability mass are considered. Defaults to 1.
+    `top_p` ++"number or null"++
 
-We generally recommend altering this or `temperature` but not both.
+    An alternative to sampling with temperature, called nucleus sampling, where the model considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens comprising the top 10% probability mass are considered. Defaults to `1`.
 
----
+    It is generally recommended to alter this or `temperature` but not both.
 
-`tools` ++"array"++
+    ---
 
-A list of tools the model may call. Currently, only functions are supported as a tool. Use this to provide a list of functions the model may generate JSON inputs for. A max of 128 functions are supported.
+    `tools` ++"array"++
 
----
+    A list of tools the model may call. Currently, only functions are supported as a tool. Use this to provide a list of functions the model may generate JSON inputs for. A max of 128 functions are supported.
 
-`tool_choice` ++"string or object"++
+    ---
 
-Controls which (if any) tool is called by the model. `none` means the model will not call any tool and instead generates a message. `auto` means the model can pick between generating a message or calling one or more tools. `required` means the model must call one or more tools. Specifying a particular tool via `{"type": "function", "function": {"name": "my_function"}}` forces the model to call that tool.
+    `tool_choice` ++"string or object"++
 
-`none` is the default when no tools are present. `auto` is the default if tools are present.
+    Controls which (if any) tool is called by the model.
 
----
+    - `none` means the model will not call any tool and instead generates a message
+    - `auto` means the model can pick between generating a message or calling one or more tools
+    - `required` means the model must call one or more tools. Specifying a particular tool via `{"type": "function", "function": {"name": "my_function"}}` forces the model to call that tool
 
-`parallel_tool_calls` ++"boolean"++ 
+    `none` is the default when no tools are present. `auto` is the default if tools are present.
 
-Whether to enable [**parallel function calling**](https://platform.openai.com/docs/guides/function-calling/parallel-function-calling) during tool use. Defaults to true. 
+    ---
 
----
+    `parallel_tool_calls` ++"boolean"++
 
-`user` ++"string"++
+    Whether to enable [**parallel function calling**](https://platform.openai.com/docs/guides/function-calling/parallel-function-calling){target=\_blank} during tool use. Defaults to `true`.
 
-A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse.
+    ---
 
----
+    `user` ++"string"++
 
-`function_call` Deprecated ++"string or object"++ Deprecated in favor of tool_choice.
+    A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse.
 
-Controls which (if any) function is called by the model. `none` means the model will not call a function and instead generates a message. `auto` means the model can pick between generating a message or calling a function. Specifying a particular function via `{"name": "my_function"}` forces the model to call that function.
+    ---
 
-`none` is the default when no functions are present. `auto` is the default if functions are present.
+    `function_call` ++"string or object"++ *deprecated*
 
----
+    This value is now deprecated in favor of `tool_choice`.
 
-`functions` Deprecated ++"array"++ Deprecated in favor of tools.
+    Controls which (if any) function is called by the model.
 
-A list of functions the model may generate JSON inputs for.
+    - `none` means the model will not call a function and instead generates a message
+    - `auto` means the model can pick between generating a message or calling a function. Specifying a particular function via `{"name": "my_function"}` forces the model to call that function
 
+    `none` is the default when no functions are present. `auto` is the default if functions are present.
+
+    ---
+
+    `functions` ++"array"++ *deprecated*
+
+    This value is now deprecated in favor of `tools`.
+
+    A list of functions the model may generate JSON inputs for.
 
 **Returns**
 
----
-
 A chat completion object, or a streamed sequence of chat completion chunk objects if the request is streamed.
 
-`id` ++"string"++ 
+`id` ++"string"++
 
 A unique identifier for the chat completion.
 
@@ -330,7 +350,7 @@ A unique identifier for the chat completion.
 
 `choices` ++"array"++
 
-A list of chat completion choices. Can be more than one if n is greater than 
+A list of chat completion choices. Can be more than one if `n` is greater than `1`.
 
 ??? child "Show properties"
 
@@ -351,6 +371,7 @@ A list of chat completion choices. Can be more than one if n is greater than
     A chat completion message generated by the model.
 
     ??? child "Show properties"
+
         `content` ++"array or null"++
         
         A list of message content tokens with log probability information.
@@ -362,6 +383,7 @@ A list of chat completion choices. Can be more than one if n is greater than
         A list of message refusal tokens with log probability information.
         
         ---
+
         `tool_calls` ++"array"++
         
         The tool calls generated by the model, such as function calls.
@@ -395,16 +417,18 @@ A list of chat completion choices. Can be more than one if n is greater than
                 `arguments` ++"string"++
                          
                 The arguments to call the function with, as generated by the model in JSON format. Note that the model does not always generate valid JSON and may hallucinate parameters not defined by your function schema. Validate the arguments in your code before calling your function.
+        
+        ---
 
-                ---
-
-        `role` ++"string"++  The role of the author of this message.
+        `role` ++"string"++
+        
+        The role of the author of this message.
         
         --- 
         
-        `function_call` Deprecated ++"object"++
+        `function_call` ++"object"++ *deprecated*
 
-        Deprecated and replaced by tool_calls. The name and arguments of a function that should be called, as generated by the model.
+        This value is now deprecated in favor of `tool_calls`. The name and arguments of a function that should be called, as generated by the model.
 
         ??? child "Show properties" 
 
@@ -415,9 +439,8 @@ A list of chat completion choices. Can be more than one if n is greater than
             ---
             
             `name` ++"string"++
-            The name of the function to call.
 
-            
+            The name of the function to call.      
 
     ---
 
@@ -426,6 +449,7 @@ A list of chat completion choices. Can be more than one if n is greater than
     Log probability information for the choice.
 
     ??? child "Show properties" 
+
         `content` ++"array or null"++
         
         A list of message content tokens with log probability information.
@@ -436,7 +460,7 @@ A list of chat completion choices. Can be more than one if n is greater than
         
         A list of message refusal tokens with log probability information.
 
-        ---
+---
 
 `created` ++"integer"++
 
@@ -472,19 +496,25 @@ The object type, which is always `chat.completion`.
 
 Usage statistics for the completion request.
 
-??? child "Show properties" 
+??? child "Show properties"
 
     `completion_tokens` ++"integer"++
     
     Number of tokens in the generated completion.
 
+    ---
+
     `prompt_tokens` ++"integer"++
     
     Number of tokens in the prompt.
 
+    ---
+
     `total_tokens` ++"integer"++
     
     Total number of tokens used in the request (prompt + completion).
+
+    ---
 
     `completion_tokens_details` ++"object"++
     
@@ -501,6 +531,8 @@ Usage statistics for the completion request.
         `reasoning_tokens` ++"integer"++
         
         Tokens generated by the model for reasoning.
+    
+    ---
 
     `prompt_tokens_details` ++"object"++
     
@@ -517,7 +549,6 @@ Usage statistics for the completion request.
         `cached_tokens` ++"integer"++
         
         Cached tokens present in the prompt.
-
 
 </div>
 <div markdown>
@@ -587,28 +618,26 @@ Usage statistics for the completion request.
 
 ---
 
-## Upload your Batch input file
+## Upload Your Batch Input File
 
 `https://api.kluster.ai/v1/files`
 
-Upload a [JSON Lines](https://jsonlines.org/) document to the Kluster.ai endpoint and take a note of the `id` in the response object.
+Upload a [JSON Lines](https://jsonlines.org/){target=\_blank} document to the Kluster.ai endpoint and take a note of the `id` in the response object.
 
 <div class="grid" markdown>
 <div markdown>
 
 **Request**
 
-`file` ++"file"++ <span class="Required" markdown>++"Required"++</span>
+`file` ++"file"++ <span class="required" markdown>++"Required"++</span>
 
 The [File](#the-file-object) object (not file name) to be uploaded.
 
 ---
 
-`purpose` ++"string"++ <span class="Required" markdown>++"Required"++</span>
+`purpose` ++"string"++ <span class="required" markdown>++"Required"++</span>
 
 The intended purpose of the uploaded file. Use `batch` for the Batch API.
-
----
 
 **Returns**
 
@@ -648,8 +677,6 @@ The name of the file.
 
 The intended purpose of the file. Currently, only `batch` is supported.
 
----
-
 </div>
 <div markdown>
 
@@ -670,11 +697,13 @@ The intended purpose of the file. Currently, only `batch` is supported.
     batch_file = client.files.create(file=open(file_name, "rb"), purpose="batch")
     print(f"Batch file uploaded. File ID: {batch_file.id}")
     ```
+
 </div>
 </div>
 
+---
 
-## Invoke the chat completion end point
+## Invoke the Chat Completion Endpoint
 
 `post https://api.kluster.ai/v1/batches`
 
@@ -685,23 +714,21 @@ Next, to create a Batch job, you invoke the chat completion API using the `input
 
 **Request**
 
----
-
-`input_file_id` ++"string"++ <span class="Required" markdown>++"Required"++</span>
+`input_file_id` ++"string"++ <span class="required" markdown>++"Required"++</span>
 
 The ID of an uploaded file that contains requests for the new Batch.
 
-Your input file must be formatted as a [JSONL file](https://jsonlines.org/), and must be uploaded with the purpose `batch`. The file can contain up to 50,000 requests, and can be up to 100 MB in size.
+Your input file must be formatted as a [JSONL file](https://jsonlines.org/){target=\_blank}, and must be uploaded with the purpose `batch`. The file can contain up to 50,000 requests, and can be up to 100 MB in size.
 
 ---
 
-`endpoint` ++"string"++ <span class="Required" markdown>++"Required"++</span>
+`endpoint` ++"string"++ <span class="required" markdown>++"Required"++</span>
 
 The endpoint to be used for all requests in the Batch. Currently, only `/v1/chat/completions` is supported.
 
 ---
 
-`completion_window` ++"string"++ <span class="Required" markdown>++"Required"++</span>
+`completion_window` ++"string"++ <span class="required" markdown>++"Required"++</span>
 
 The time frame within which the Batch should be processed. Currently, only **24h** is supported.
 
@@ -711,11 +738,8 @@ The time frame within which the Batch should be processed. Currently, only **24h
 
 Custom metadata for the Batch.
 
----
-
 **Returns**
 
----
 The created [Batch](#batch-object) object.
 
 `id` ++"string"++
@@ -730,7 +754,7 @@ The object type, which is always `batch`.
 
 ---
 
-`endpoint` ++"string"++ 
+`endpoint` ++"string"++
 
 The Kluster.ai API endpoint used by the batch.
 
@@ -866,7 +890,6 @@ Set of 16 key-value pairs that can be attached to an object. This is useful for 
     print(f"Batch request submitted. Batch ID: {batch_request.id}")
     ```
 
-
 ```Json title="Response"
 {
     "id": "2b96e3e4-cd7b-43fd-9dd3-d82153bdd752",
@@ -895,12 +918,13 @@ Set of 16 key-value pairs that can be attached to an object. This is useful for 
     "metadata": {}
 }
 ```
-</div>
-</div>
 
-## Monitor the progress of the Batch job
+</div>
+</div>
 
 ---
+
+## Monitor the Progress of the Batch Job
 
 `get https://api.kluster.ai/v1/batches/{batch_id}`
 
@@ -911,17 +935,13 @@ To verify that the Batch job has finished, check the `status` property for `comp
 
 **Path parameters**
 
----
-
-`batch_id` ++"string"++ <span class="Required" markdown>++"Required"++</span>
+`batch_id` ++"string"++ <span class="required" markdown>++"Required"++</span>
 
 The ID of the Batch to retrieve.
 
 **Returns**
 
----
-
-The Batch object matching the specified `id`.
+The [Batch](#the-batch-object) object matching the specified `id`.
 
 </div>
 <div markdown>
@@ -929,13 +949,13 @@ The Batch object matching the specified `id`.
 === "Curl"
 
     ```bash title="Example request"
-        curl -s https://api.kluster.ai/v1/batches/2b96e3e4-cd7b-43fd-9dd3-d82153bdd752 \
-        -H "Authorization: Bearer $API_KEY" \
-        -H "Content-Type: application/json"
+    curl -s https://api.kluster.ai/v1/batches/2b96e3e4-cd7b-43fd-9dd3-d82153bdd752 \
+    -H "Authorization: Bearer $API_KEY" \
+    -H "Content-Type: application/json"
     ```
 
 === "Python"
-    
+
     ```python title="Example request"
     import time
 
@@ -981,32 +1001,28 @@ The Batch object matching the specified `id`.
   "metadata": {}
 }
 ```
+
 </div>
 </div>
 
 ---
-<div class="grid" markdown>
-<div markdown>
 
-## Retrieve the file content of the Batch job
-
----
+## Retrieve the File Content of the Batch Job
 
 `get https://api.kluster.ai/v1/files/{file_id}/content`
 
 To retrieve the file content of the Batch job, send a request to the `files` end point specifying the `output_file_id` and redirecting standard output to a file.
 
+<div class="grid" markdown>
+<div markdown>
+
 **Path parameters**
 
----
-
-`file_id` ++"string"++ <span class="Required" markdown>++"Required"++</span> 
+`file_id` ++"string"++ <span class="required" markdown>++"Required"++</span>
 
 The ID of the file to use for this request
 
 **Returns**
-
----
 
 The output file content matching the specified file ID.
 
@@ -1016,12 +1032,12 @@ The output file content matching the specified file ID.
 === "Curl"
 
     ```bash title="Example request"
-        curl -s https://api.kluster.ai/v1/files/kluster-output-file-123"/content \
-        -H "Authorization: Bearer $API_KEY" > batch_output.jsonl
+    curl -s https://api.kluster.ai/v1/files/kluster-output-file-123"/content \
+    -H "Authorization: Bearer $API_KEY" > batch_output.jsonl
     ```
 
 === "Python"
-    
+
     ```python title="Example request"
         # Check if the batch completed successfully
         if batch_status.status.lower() == "completed":
@@ -1040,32 +1056,30 @@ The output file content matching the specified file ID.
 </div>
 </div>
 
-<div class="grid" markdown>
-<div markdown>
-
-## List all Batch jobs
-
 ---
+
+## List all Batch Jobs
 
 `get https://api.kluster.ai/v1/batches`
 
-To list all of your [Batch](#the-batch-object) objects, send a request to the batches endpoint without specifying a batch_id. To constrain the query response, you can also use a limit parameter. 
+To list all of your [Batch](#the-batch-object) objects, send a request to the batches endpoint without specifying a batch_id. To constrain the query response, you can also use a limit parameter.
+
+<div class="grid" markdown>
+<div markdown>
 
 **Query parameters**
 
----
+`after` ++"string"++
 
-`after` ++"string"++ - A cursor for use in pagination. `after` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, ending with `obj_foo`, your subsequent call can include `after=obj_foo` in order to fetch the next page of the list.
-
----
-
-`limit` ++"integer"++ - A limit on the number of objects to be returned. Limit can range between 1 and 100, and the
+A cursor for use in pagination. `after` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, ending with `obj_foo`, your subsequent call can include `after=obj_foo` in order to fetch the next page of the list.
 
 ---
+
+`limit` ++"integer"++
+
+A limit on the number of objects to be returned. Limit can range between 1 and 100, and the
 
 **Returns**
-
----
 
 A list of paginated [Batch](#the-batch-object) objects.
 
@@ -1088,8 +1102,8 @@ The status of a Batch object can be one of the following:
 === "Curl"
 
     ```bash title="Example" 
-        curl https://api.kluster.ai/v1/batches \
-        -H "Authorization: Bearer $API_KEY"
+    curl https://api.kluster.ai/v1/batches \
+    -H "Authorization: Bearer $API_KEY"
     ```
 
 === "Python"
@@ -1146,32 +1160,29 @@ The status of a Batch object can be one of the following:
     }
 ```
 
+</div>
+</div>
 
-</div>
-</div>
 ---
-<div class="grid" markdown>
-<div markdown>
 
-## Cancelling a Batch job
+## Cancelling a Batch Job
 
 `post https://api.kluster.ai/v1/batches/{batch_id}/cancel`
 
-To cancel an in-progress Batch job, send a cancel request to the batches endpoint specifying the `batch_id`. 
+To cancel an in-progress Batch job, send a cancel request to the batches endpoint specifying the `batch_id`.
+
+<div class="grid" markdown>
+<div markdown>
 
 **Path parameters**
 
----
+`batch_id` ++"string"++ <span class="required" markdown>++"Required"++</span>
 
-`batch_id` ++"string"++ <span class="Required" markdown>++"Required"++</span> - The ID of the Batch to cancel.
-
----
+The ID of the Batch to cancel.
 
 **Returns**
 
----
-
-The Batch object matching the specified ID.
+The [Batch](#the-batch-object) object matching the specified ID.
 
 </div>
 <div markdown>
@@ -1195,7 +1206,6 @@ The Batch object matching the specified ID.
     client.batches.cancel("kluster_123")
     ```
 
-**Response**
 ```Json title="Response"
 {
   "id": "642853d4-e816-4be2-8453-6ce6f0f00b9c",
@@ -1224,18 +1234,23 @@ The Batch object matching the specified ID.
   "metadata": {}
 }
 ```
+
 </div>
 </div>
+
+---
 
 ## Summary
 
-You’ve now run a simple Batch use case by sending a collection of Batch request input objects to the chat completion end point, monitored the Batch interface for the progress of the job, and downloaded the result of the Batch job. To learn more about the end points we support, refer to the API documentation (link).
+You've now run a simple Batch use case by sending a collection of Batch request input objects to the chat completion end point, monitored the Batch interface for the progress of the job, and downloaded the result of the Batch job. To learn more about the end points we support, refer to the API documentation (link).
 
 ## References
 
 ### The Batch Object
 
 `id` ++"string"++
+
+The ID of the Batch job.
 
 ---
 
@@ -1253,7 +1268,10 @@ The Kluster.ai API endpoint used by the batch.
 
 `errors` ++"object"++
 
+An object containing error information.
+
 ??? child "Show properties"
+
     `object` ++"string"++
 
     The object type, which is always `list`.
@@ -1263,6 +1281,7 @@ The Kluster.ai API endpoint used by the batch.
     `data` ++"array"++
 
     ??? child "Show properties"
+
         `code` ++"string"++
         
         An error code identifying the error type.
@@ -1285,7 +1304,7 @@ The Kluster.ai API endpoint used by the batch.
         
         The line number of the input file where the error occurred, if applicable.
 
---- 
+---
 
 `input_file_id` ++"string"++
 
@@ -1376,8 +1395,9 @@ The Unix timestamp (in seconds) for when the Batch was cancelled.
 The request counts for different statuses within the Batch.
 
 ??? child "Show properties"
+
     `total` ++"integer"++
-    
+
     Total number of requests in the batch.
 
     ---
@@ -1397,7 +1417,6 @@ The request counts for different statuses within the Batch.
 `metadata` ++"map"++
 
 Set of 16 key-value pairs that can be attached to an object. This is useful for storing additional information about the object in a structured format. Keys can be a maximum of 64 characters long and values can be a maximum of 512 characters long.
-
 
 ### The File Object
 
@@ -1419,13 +1438,13 @@ The size of the file in bytes.
 
 The Unix timestamp (in seconds) of when the file was created.
 
---- 
+---
 
 `filename` ++"string"++
 
 The name of the file.
 
---- 
+---
 
 `object` ++"string"++
 
@@ -1439,12 +1458,12 @@ The intended purpose of the file. `batch` and `batch_output` are the supported v
 
 ---
 
-`status` Deprecated ++"string"++
+`status` ++"string"++ *deprecated*
 
 The current status of the file, which can be either uploaded, processed, or error.
 
 ---
 
-`status_details` Deprecated ++"string"++
+`status_details` ++"string"++ *deprecated*
 
 For details on why a fine-tuning training file failed validation, see the error field on fine_tuning.job.
