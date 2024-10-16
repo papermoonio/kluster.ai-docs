@@ -1,13 +1,13 @@
 site_name: Kluster Docs
-site_url: https://kluster.ai/
-home_url: # TODO: Add docs URL
+site_url: https://papermoonio.github.io/kluster.ai-docs/
+home_url: https://kluster.ai/
 docs_dir: kluster-docs
 copyright: © 2024 kluster.ai. All rights reserved.
 theme:
   name: material
   custom_dir: material-overrides
-  favicon: /assets/images/favicon.png
-  logo: /assets/images/logo.png
+  favicon: assets/images/favicon.png
+  logo: assets/images/logo.png
   font:
     text: DM Sans
     code: Source Code Pro
