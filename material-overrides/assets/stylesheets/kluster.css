@@ -108,25 +108,25 @@ li > nav.md-nav[data-md-level='4'] {
 }
 
 /* Styling for custom Admonition notes used for code */
-.md-typeset .admonition.code,
+/* .md-typeset .admonition.code,
 .md-typeset details.code {
   border-color: XXX;
-}
+} */
 
 /* Admonition icon background color */
 /* Should be the same as the border color above */
-.md-typeset .code > .admonition-title,
+/* .md-typeset .code > .admonition-title,
 .md-typeset .code > summary {
   background-color: XXX;
-}
+} */
 
 /* Admonition top background color */
-.md-typeset .code > .admonition-title::before,
+/* .md-typeset .code > .admonition-title::before,
 .md-typeset .code > summary::before {
   background-color: XXX;
   -webkit-mask-image: XXX;
   mask-image: XXX;
-}
+} */
 
 /* Styling for the Copy to Clipboard */
 /* Clipboard icon */
