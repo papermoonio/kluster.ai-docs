@@ -13,7 +13,7 @@
         {% set icon = config.theme.icon.menu or "material/menu" %}
         {% include ".icons/" ~ icon ~ ".svg" %}
       </label>
-      <a href="{{ config.extra.homepage | d(nav.homepage.url, true) | url }}" title="{{ config.site_name | e }}" class="md-header__button md-logo" aria-label="{{ config.site_name }}" data-md-component="logo">
+      <a href="{{ config.home_url }}" title="{{ config.home_name | e }}" class="md-header__button md-logo" aria-label="{{ config.home_name }}" data-md-component="logo">
         {% include "partials/logo.html" %}
       </a>
       <div class="md-header__title" data-md-component="header-title">
